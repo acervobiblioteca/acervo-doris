@@ -3,270 +3,189 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acervo Bibliográfico - Consulta</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Biblioteca Dóris - CDDir (Direito)</title>
   
-  <style>
-    :root {
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #2563eb;
-      --border: #e2e8f0;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: 50px; }
-
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
-      padding: 40px 20px;
-      text-align: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-
-    .brand { font-size: 28px; font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 6px; }
-    .brand span { color: var(--primary); }
-    .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 25px; }
-
-    .search-box {
-      max-width: 650px;
-      margin: 0 auto;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 16px 22px;
-      font-size: 16px;
-      border: 2px solid var(--border);
-      border-radius: 30px;
-      outline: none;
-      transition: all 0.2s ease;
-      background: #ffffff;
-    }
-
-    .search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
-    }
-
-    .container { max-width: 1200px; margin: 35px auto; padding: 0 20px; }
-    
-    .results-count {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      font-weight: 500;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 22px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    }
-
-    .spine-accent {
-      height: 6px;
-      width: 100%;
-      background: var(--primary);
-    }
-
-    .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-
-    .code-badge {
-      align-self: flex-start;
-      background: #f1f5f9;
-      color: #334155;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: 6px;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-      border: 1px solid #cbd5e1;
-    }
-
-    .book-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; }
-    .book-author { font-size: 14px; color: var(--text-muted); margin-bottom: 14px; font-weight: 500; }
-
-    .book-details {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px dashed var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 13px;
-    }
-
-    .detail-item { display: flex; justify-content: space-between; color: var(--text-muted); }
-    .detail-item strong { color: var(--text-main); font-weight: 600; }
-
-    .tag-assunto {
-      display: inline-block;
-      margin-top: 10px;
-      background: #eff6ff;
-      color: #1e40af;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-      width: fit-content;
-    }
-
-    .status-msg {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 60px 0;
-      color: var(--text-muted);
-      font-size: 16px;
-    }
-
-    .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid var(--primary);
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px auto;
-    }
-
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
 
-  <header>
-    <div class="brand">Acervo <span>Bibliográfico</span></div>
-    <p class="subtitle">Pesquise por Título, Autor, Assunto ou Código de Localização</p>
-    <div class="search-box">
-      <input type="text" id="searchInput" class="search-input" placeholder="Digite para pesquisar..." oninput="filtrarLivros()">
+  <header class="bg-amber-800 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-scale-balanced text-2xl text-amber-200"></i>
+        <div>
+          <h1 class="text-xl font-bold leading-tight">Biblioteca Dóris</h1>
+          <p class="text-xs text-amber-100">Classificação Decimal de Direito (CDDir - Doris de Queiroz Carvalho)</p>
+        </div>
+      </div>
+
+      <div id="totalBadge" class="bg-amber-900 text-amber-100 text-xs font-semibold px-3 py-1.5 rounded-full border border-amber-600 hidden">
+        <i class="fa-solid fa-book mr-1"></i> <span id="totalLivros">0</span> obras de Direito
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <div id="resultsCount" class="results-count"></div>
-    <div id="grid" class="grid"></div>
+  <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1">
+    <section class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-6">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="text" id="searchInput" oninput="filtrarLivros()" 
+               placeholder="Pesquise por Título, Autor, Notação Jurídica (CDDir) ou Assunto..." 
+               class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-700 text-sm">
+      </div>
+    </section>
+
+    <div id="loading" class="my-16 flex flex-col items-center justify-center gap-3">
+      <div class="w-12 h-12 border-4 border-amber-800 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-slate-600 font-medium text-sm">A carregar acervo jurídico (CDDir)...</p>
+    </div>
+
+    <section id="gridLivros" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></section>
+
+    <div id="emptyMessage" class="hidden my-12 text-center text-slate-500 space-y-2">
+      <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
+      <p class="font-medium">Nenhum livro de Direito encontrado.</p>
+    </div>
   </main>
 
+  <div id="modalDetalhes" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto space-y-4">
+      <button onclick="fecharModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+        <img id="modalCapa" src="" class="w-36 h-52 object-cover rounded-xl shadow-md border border-slate-200" alt="Capa da obra">
+        <div class="space-y-2 flex-1 text-center sm:text-left">
+          <span id="modalNotacao" class="inline-block px-2.5 py-1 rounded bg-amber-100 text-amber-900 font-mono font-bold text-sm"></span>
+          <h2 id="modalTitulo" class="text-lg font-bold text-slate-900 leading-snug"></h2>
+          <p id="modalAutor" class="text-sm font-medium text-slate-600"></p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-3 space-y-2 text-xs text-slate-700">
+        <div><strong class="text-slate-900">Ramo do Direito / Assunto:</strong> <span id="modalAssunto"></span></div>
+        <div><strong class="text-slate-900">Exemplar:</strong> <span id="modalExemplar"></span></div>
+        <div><strong class="text-slate-900">Volume:</strong> <span id="modalVolume"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-8">
+    <p>© Biblioteca Dóris — Classificação Decimal de Direito (CDDir)</p>
+  </footer>
+
   <script>
-    // URL da API configurada
-    const API_URL = "https://script.google.com/macros/s/AKfycbxkLzHZcm-9pAgHMLwAD4upBuun1CL5z34E4k_Ima75vYsRJ29naDhHGw4_Ai5NKouE/exec";
+    const SPREADSHEET_ID = '1o0ZIgtgFI7uncf-dETXs4aSj71pEzMaHND4JmBqv39A';
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv`;
 
-    let todosOsLivros = [];
-    let timeoutBusca = null;
+    let acervoCompleto = [];
 
-    const coresMap = {
-      'vermelho': '#ef4444', 'vermelha': '#ef4444',
-      'azul': '#3b82f6',
-      'verde': '#22c55e',
-      'amarelo': '#eab308', 'amarela': '#eab308',
-      'laranja': '#f97316',
-      'roxo': '#a855f7', 'roxa': '#a855f7',
-      'preto': '#1e293b', 'preta': '#1e293b',
-      'branco': '#cbd5e1', 'branca': '#cbd5e1',
-      'cinza': '#64748b',
-      'marrom': '#78350f',
-      'rosa': '#ec4899'
-    };
+    window.addEventListener('DOMContentLoaded', carregarAcervo);
 
-    function obterCorHex(nomeCor) {
-      if (!nomeCor) return '#2563eb';
-      const corClean = nomeCor.toLowerCase().trim();
-      for (let key in coresMap) {
-        if (corClean.includes(key)) return coresMap[key];
-      }
-      return '#2563eb';
+    function carregarAcervo() {
+      Papa.parse(CSV_URL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          acervoCompleto = results.data.map(item => ({
+            notacao: item['Código / Notação'] || '',
+            exemplar: item['Exemplar'] || '',
+            volume: item['Volume'] || '',
+            titulo: item['Título da Obra'] || '',
+            autor: item['Autor / Organizador'] || '',
+            assunto: item['Assunto (Acervo)'] || '',
+            capa: item['Capa'] || ''
+          }));
+
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('totalBadge').classList.remove('hidden');
+          document.getElementById('totalLivros').innerText = acervoCompleto.length;
+          document.getElementById('gridLivros').classList.remove('hidden');
+
+          renderizarLivros(acervoCompleto);
+        },
+        error: function() {
+          document.getElementById('loading').innerHTML = `
+            <div class="text-red-600 text-center p-4">
+              <i class="fa-solid fa-circle-exclamation text-3xl mb-2"></i>
+              <p class="font-bold">Erro ao carregar a planilha do CDDir.</p>
+            </div>`;
+        }
+      });
     }
 
-    async function carregarAcervo() {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '<div class="status-msg"><div class="spinner"></div>Carregando o acervo...</div>';
-
-      try {
-        const response = await fetch(API_URL);
-        todosOsLivros = await response.json();
-        exibirLivros(todosOsLivros);
-      } catch (erro) {
-        console.error("Erro ao carregar:", erro);
-        grid.innerHTML = '<div class="status-msg">Erro ao carregar os dados do acervo.</div>';
-      }
-    }
-
-    function exibirLivros(livros) {
-      const grid = document.getElementById('grid');
-      const count = document.getElementById('resultsCount');
-
-      count.innerText = `${livros.length} item(ns) encontrado(s)`;
+    function renderizarLivros(lista) {
+      const grid = document.getElementById('gridLivros');
+      const emptyMsg = document.getElementById('emptyMessage');
       grid.innerHTML = '';
 
-      if (livros.length === 0) {
-        grid.innerHTML = '<div class="status-msg">Nenhum livro encontrado com esse termo.</div>';
+      if (lista.length === 0) {
+        emptyMsg.classList.remove('hidden');
         return;
       }
 
-      livros.forEach(item => {
-        const corHex = obterCorHex(item.corLombada);
+      emptyMsg.classList.add('hidden');
 
-        grid.innerHTML += `
-          <div class="card">
-            <div class="spine-accent" style="background-color: ${corHex};"></div>
-            <div class="card-body">
-              <span class="code-badge">📍 ${item.codigo || 'Sem Código'}</span>
-              <h3 class="book-title">${item.titulo || 'Sem Título'}</h3>
-              <p class="book-author">${item.autor || 'Autor Não Especificado'}</p>
-              
-              ${item.assunto ? `<span class="tag-assunto">📚 ${item.assunto}</span>` : ''}
+      lista.forEach(livro => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-slate-200 transition cursor-pointer flex flex-col justify-between group";
+        card.onclick = () => abrirModal(livro);
 
-              <div class="book-details">
-                ${item.exemplar ? `<div class="detail-item"><span>Exemplar:</span> <strong>${item.exemplar}</strong></div>` : ''}
-                ${item.volume ? `<div class="detail-item"><span>Volume:</span> <strong>${item.volume}</strong></div>` : ''}
-                ${item.corLombada ? `<div class="detail-item"><span>Lombada:</span> <strong>${item.corLombada}</strong></div>` : ''}
-              </div>
+        const capaSrc = livro.capa ? livro.capa : 'https://via.placeholder.com/200x300?text=Sem+Capa';
+
+        card.innerHTML = `
+          <div>
+            <div class="relative w-full h-48 bg-slate-100 overflow-hidden">
+              <img src="${capaSrc}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy" alt="${livro.titulo}">
+            </div>
+            <div class="p-3">
+              <span class="inline-block text-[10px] font-mono font-bold bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded mb-1">${livro.notacao || 'CDDir'}</span>
+              <h3 class="text-xs font-bold text-slate-900 line-clamp-2 leading-snug">${livro.titulo || 'Sem Título'}</h3>
+              <p class="text-[11px] text-slate-500 truncate mt-0.5">${livro.autor || 'Autor Desconhecido'}</p>
             </div>
           </div>
+          <div class="px-3 pb-3 pt-1 border-t border-slate-50 flex justify-between items-center text-[10px] text-slate-400">
+            <span>${livro.exemplar ? livro.exemplar : '1º Ex.'}</span>
+            <i class="fa-solid fa-chevron-right text-slate-300"></i>
+          </div>
         `;
+
+        grid.appendChild(card);
       });
     }
 
     function filtrarLivros() {
-      clearTimeout(timeoutBusca);
-      timeoutBusca = setTimeout(() => {
-        const termo = document.getElementById('searchInput').value.toLowerCase().trim();
-        
-        const filtrados = todosOsLivros.filter(item => {
-          return item.titulo.toLowerCase().includes(termo) ||
-                 item.autor.toLowerCase().includes(termo) ||
-                 item.assunto.toLowerCase().includes(termo) ||
-                 item.codigo.toLowerCase().includes(termo);
-        });
+      const termo = document.getElementById('searchInput').value.toLowerCase().trim();
 
-        exibirLivros(filtrados);
-      }, 150);
+      const filtrados = acervoCompleto.filter(item => {
+        return (item.titulo.toLowerCase().includes(termo) ||
+                item.autor.toLowerCase().includes(termo) ||
+                item.notacao.toLowerCase().includes(termo) ||
+                item.assunto.toLowerCase().includes(termo));
+      });
+
+      renderizarLivros(filtrados);
     }
 
-    carregarAcervo();
+    function abrirModal(livro) {
+      document.getElementById('modalCapa').src = livro.capa ? livro.capa : 'https://via.placeholder.com/200x300?text=Sem+Capa';
+      document.getElementById('modalNotacao').innerText = livro.notacao || 'Sem Notação';
+      document.getElementById('modalTitulo').innerText = livro.titulo || 'Sem Título';
+      document.getElementById('modalAutor').innerText = livro.autor || 'Autor não informado';
+      document.getElementById('modalAssunto').innerText = livro.assunto || 'N/A';
+      document.getElementById('modalExemplar').innerText = livro.exemplar || '1º Exemplar (Padrão)';
+      document.getElementById('modalVolume').innerText = livro.volume || 'N/A';
+
+      document.getElementById('modalDetalhes').classList.remove('hidden');
+    }
+
+    function fecharModal() {
+      document.getElementById('modalDetalhes').classList.add('hidden');
+    }
   </script>
 </body>
 </html>
