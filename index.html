@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biblioteca CDDir (Dóris) - Acervo e Etiquetas</title>
+  <title>Biblioteca SBPE - Acervo Dóris</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -12,6 +12,11 @@
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+      }
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
       }
       body * { visibility: hidden; }
       #areaImpressao, #areaImpressao * { visibility: visible; }
@@ -22,12 +27,20 @@
         width: 100%;
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8mm !important;
-        padding: 5mm !important;
+        gap: 6mm 8mm !important;
+        padding: 8mm 6mm !important;
+        box-sizing: border-box !important;
+      }
+      .etiqueta-card {
+        border: 1px dashed #64748b !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
       .no-print { display: none !important; }
     }
 
+    /* Efeito Ripple (Água) ao clicar */
     .ripple {
       position: relative;
       overflow: hidden;
@@ -54,6 +67,7 @@
       transition: 0s;
     }
 
+    /* Dimensões precisas das Etiquetas (6.8cm x 3.8cm) */
     .etiqueta-card {
       width: 6.8cm;
       height: 3.8cm;
@@ -66,41 +80,97 @@
       justify-content: space-between;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       page-break-inside: avoid;
+      break-inside: avoid;
+      border-radius: 4px;
     }
 
     .etiqueta-notacao {
-      font-family: monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-weight: 900;
-      font-size: 13px;
+      font-size: 12.5px;
       color: #0f172a;
       letter-spacing: -0.2px;
     }
 
     .tag-cor-lombada {
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 900;
       padding: 2px 6px;
       border-radius: 4px;
       text-transform: uppercase;
-      color: #000000 !important;
-      border: 1px solid rgba(0, 0, 0, 0.3);
       display: inline-block;
+      white-space: nowrap;
+      line-height: 1;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
 
-    .cor-VERDE { background-color: #86efac !important; }
-    .cor-AZUL { background-color: #93c5fd !important; }
-    .cor-AMARELO { background-color: #fef08a !important; }
-    .cor-VERMELHO { background-color: #fca5a5 !important; }
-    .cor-ROXO { background-color: #d8b4fe !important; }
-    .cor-PRETO, .cor-CINZA { background-color: #cbd5e1 !important; }
-    .cor-PADRAO { background-color: #e2e8f0 !important; }
+    /* Mapeamento Rigoroso de Cores de Lombada */
+    .cor-ROSA {
+      background-color: #f472b6 !important;
+      color: #831843 !important;
+      border: 1px solid #db2777 !important;
+    }
+    .cor-VERDE-CLARO {
+      background-color: #bef264 !important;
+      color: #365314 !important;
+      border: 1px solid #65a30d !important;
+    }
+    .cor-VERDE {
+      background-color: #86efac !important;
+      color: #14532d !important;
+      border: 1px solid #16a34a !important;
+    }
+    .cor-AZUL-CLARO {
+      background-color: #7dd3fc !important;
+      color: #0c4a6e !important;
+      border: 1px solid #0284c7 !important;
+    }
+    .cor-AZUL {
+      background-color: #93c5fd !important;
+      color: #1e3a8a !important;
+      border: 1px solid #2563eb !important;
+    }
+    .cor-AMARELO {
+      background-color: #fef08a !important;
+      color: #713f12 !important;
+      border: 1px solid #ca8a04 !important;
+    }
+    .cor-VERMELHO {
+      background-color: #fca5a5 !important;
+      color: #7f1d1d !important;
+      border: 1px solid #dc2626 !important;
+    }
+    .cor-ROXO {
+      background-color: #d8b4fe !important;
+      color: #581c87 !important;
+      border: 1px solid #9333ea !important;
+    }
+    .cor-LARANJA {
+      background-color: #fdba74 !important;
+      color: #7c2d12 !important;
+      border: 1px solid #ea580c !important;
+    }
+    .cor-CINZA {
+      background-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      border: 1px solid #64748b !important;
+    }
+    .cor-BRANCO {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1.5px solid #475569 !important;
+    }
+    .cor-PADRAO {
+      background-color: #e2e8f0 !important;
+      color: #334155 !important;
+      border: 1px solid #94a3b8 !important;
+    }
 
     .etiqueta-titulo {
       font-weight: 800;
-      font-size: 11px;
-      line-height: 1.25;
+      font-size: 10.5px;
+      line-height: 1.2;
       color: #0f172a;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -110,17 +180,17 @@
     }
 
     .etiqueta-autor {
-      font-size: 10px;
-      color: #334155;
+      font-size: 9px;
+      color: #475569;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     .etiqueta-rodape {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
       color: #1e293b;
       display: flex;
@@ -131,22 +201,22 @@
 </head>
 <body class="bg-slate-100 min-h-screen font-sans text-slate-800">
 
-  <nav class="bg-amber-800 text-white p-4 shadow-md no-print">
+  <nav class="bg-emerald-800 text-white p-4 shadow-md no-print">
     <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
-        <i class="fa-solid fa-gavel text-2xl text-amber-300"></i>
+        <i class="fa-solid fa-book-bookmark text-2xl text-emerald-300"></i>
         <div>
-          <h1 class="font-bold text-lg leading-none">Biblioteca CDDir (Dóris)</h1>
-          <p class="text-xs text-amber-200 mt-0.5">Acervo de Direito (Classificação Dóris de Queiroz Carvalho)</p>
+          <h1 class="font-bold text-lg leading-none">Biblioteca SBPE - Dóris</h1>
+          <p class="text-xs text-emerald-200 mt-0.5">Acervo Classificação Dóris de Vasconcellos (Infantil)</p>
         </div>
       </div>
       
       <div class="flex items-center gap-2">
-        <button onclick="abrirModalEtiquetas()" class="ripple bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition shadow flex items-center gap-1.5">
+        <button onclick="abrirModalEtiquetas()" class="ripple bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition shadow flex items-center gap-1.5">
           <i class="fa-solid fa-print"></i>
           <span>Imprimir Etiquetas</span>
         </button>
-        <span id="contadorObras" class="bg-amber-950/60 text-amber-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-amber-700/50">0 obras</span>
+        <span id="contadorObras" class="bg-emerald-950/60 text-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-700/50">0 obras</span>
       </div>
     </div>
   </nav>
@@ -156,9 +226,9 @@
       <div class="flex gap-2">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="inputPesquisa" onkeydown="if(event.key==='Enter') executarPesquisaManualmente()" placeholder="Pesquise por Título, Autor, Assunto (Gênero), Notação ou Cor de Lombada..." class="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-600">
+          <input type="text" id="inputPesquisa" onkeydown="if(event.key==='Enter') executarPesquisaManualmente()" placeholder="Pesquise por Título, Autor, Assunto (Gênero), Notação ou Cor de Lombada..." class="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600">
         </div>
-        <button onclick="executarPesquisaManualmente()" class="ripple bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow flex items-center gap-1.5">
+        <button onclick="executarPesquisaManualmente()" class="ripple bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow flex items-center gap-1.5">
           <i class="fa-solid fa-search"></i>
           <span>Pesquisar</span>
         </button>
@@ -171,19 +241,19 @@
     </div>
 
     <div id="gridObras" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <p class="col-span-full text-center text-slate-400 py-10 text-xs">Carregando acervo Dóris (CDDir)...</p>
+      <p class="col-span-full text-center text-slate-400 py-10 text-xs">Carregando acervo Dóris...</p>
     </div>
   </main>
 
   <!-- MODAL FICHA DA OBRA -->
   <div id="modalFicha" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
     <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 transform transition-all">
-      <div class="bg-amber-800 text-white p-4 flex justify-between items-center">
+      <div class="bg-emerald-800 text-white p-4 flex justify-between items-center">
         <h3 class="font-bold text-sm flex items-center gap-2">
           <i class="fa-solid fa-book-open"></i>
           <span>Ficha da Obra</span>
         </h3>
-        <button onclick="fecharFicha()" class="text-amber-200 hover:text-white font-bold text-lg">✕</button>
+        <button onclick="fecharFicha()" class="text-emerald-200 hover:text-white font-bold text-lg">✕</button>
       </div>
 
       <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
@@ -207,7 +277,7 @@
 
         <div class="space-y-2">
           <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-tags text-amber-600"></i>
+            <i class="fa-solid fa-tags text-emerald-600"></i>
             <span>Assuntos (Temas Correlacionados):</span>
           </h4>
           <div id="fichaAssuntos" class="flex flex-wrap gap-1.5"></div>
@@ -225,8 +295,8 @@
     <div class="bg-white rounded-2xl max-w-xl w-full p-5 shadow-2xl space-y-4 border border-slate-100">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-          <i class="fa-solid fa-tags text-amber-700"></i>
-          <span>Imprimir Etiquetas de Lombada - CDDir</span>
+          <i class="fa-solid fa-tags text-emerald-700"></i>
+          <span>Imprimir Etiquetas de Lombada</span>
         </h3>
         <button onclick="fecharModalEtiquetas()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
       </div>
@@ -244,7 +314,7 @@
 
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="fecharModalEtiquetas()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Cancelar</button>
-        <button onclick="window.print()" class="ripple px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1.5">
+        <button onclick="window.print()" class="ripple px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1.5">
           <i class="fa-solid fa-print"></i>
           <span>Imprimir Agora</span>
         </button>
@@ -255,14 +325,16 @@
   <div id="areaImpressao" class="hidden"></div>
 
   <script>
-    const SPREADSHEET_ID = '1o0ZIgtgFI7uncf-dETXs4aSj71pEzMaHND4JmBqv39A';
+    const SPREADSHEET_ID = '1qp9NMs2qTPEjd9ks5TjG3Gq27A6zWnqfhVZM0kJB6gw';
+    const SHEET_NAME = 'Doris';
     let todosOsLivros = [];
     let palavraSugestaoAtual = '';
 
     window.onload = function() { carregarDadosPlanilha(); };
 
     async function carregarDadosPlanilha() {
-      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&_ts=${Date.now()}`;
+      const sheetQuery = SHEET_NAME ? `&sheet=${encodeURIComponent(SHEET_NAME)}` : '';
+      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json${sheetQuery}&_ts=${Date.now()}`;
 
       try {
         const response = await fetch(url);
@@ -322,7 +394,7 @@
           </div>
           <div class="p-3 space-y-1 bg-white">
             <span class="inline-block bg-slate-100 text-slate-800 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-slate-200">${livro.notacao}</span>
-            <h4 class="font-bold text-xs text-slate-900 truncate group-hover:text-amber-700 transition-colors">${livro.titulo}</h4>
+            <h4 class="font-bold text-xs text-slate-900 truncate group-hover:text-emerald-700 transition-colors">${livro.titulo}</h4>
             <p class="text-[10px] text-slate-500 truncate">${livro.autor}</p>
           </div>
         </div>
@@ -348,7 +420,7 @@
       if (livro.assunto) {
         const assuntos = livro.assunto.split(/[,;-]/).map(a => a.trim()).filter(a => a !== '');
         divAssuntos.innerHTML = assuntos.map(a => `
-          <span onclick="pesquisarPorAssunto('${a}')" class="ripple bg-amber-50 text-amber-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-200 hover:bg-amber-200 cursor-pointer transition">
+          <span onclick="pesquisarPorAssunto('${a}')" class="ripple bg-emerald-50 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-emerald-200 hover:bg-emerald-200 cursor-pointer transition">
             # ${a}
           </span>
         `).join('');
@@ -537,9 +609,9 @@
               <span class="tag-cor-lombada cor-${classeCor}">${livro.corLombada || 'VERDE'}</span>
             </div>
             <hr class="border-t border-slate-300 my-1">
-            <div class="flex-1 flex flex-col justify-center">
+            <div class="flex-1 flex flex-col justify-center my-0.5">
               <div class="etiqueta-titulo">${livro.titulo}</div>
-              <div class="etiqueta-autor">${livro.autor}</div>
+              <div class="etiqueta-autor">${livro.autor || 'Autor não informado'}</div>
             </div>
             <hr class="border-t border-slate-300 my-1">
             <div class="etiqueta-rodape">
@@ -553,13 +625,18 @@
 
     function obterClasseCor(cor) {
       if (!cor) return 'PADRAO';
-      const c = cor.toUpperCase();
+      const c = String(cor).trim().toUpperCase();
+      if (c.includes('VERDE CLARO') || c.includes('VERDE-CLARO')) return 'VERDE-CLARO';
+      if (c.includes('AZUL CLARO') || c.includes('AZUL-CLARO')) return 'AZUL-CLARO';
       if (c.includes('VERDE')) return 'VERDE';
       if (c.includes('AZUL')) return 'AZUL';
       if (c.includes('AMARELO')) return 'AMARELO';
       if (c.includes('VERMELHO')) return 'VERMELHO';
       if (c.includes('ROXO')) return 'ROXO';
-      if (c.includes('PRETO') || c.includes('CINZA')) return 'CINZA';
+      if (c.includes('ROSA')) return 'ROSA';
+      if (c.includes('LARANJA')) return 'LARANJA';
+      if (c.includes('CINZA') || c.includes('PRETO')) return 'CINZA';
+      if (c.includes('BRANCO')) return 'BRANCO';
       return 'PADRAO';
     }
 
