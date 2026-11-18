@@ -3,645 +3,685 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biblioteca SBPE - Acervo Dóris</title>
+  <title>Acervo Dóris (CDDir) — Consulta ao Catálogo Jurídico</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <style>
-    @media print {
-      * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-      }
-      body * { visibility: hidden; }
-      #areaImpressao, #areaImpressao * { visibility: visible; }
-      #areaImpressao {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 6mm 8mm !important;
-        padding: 8mm 6mm !important;
-        box-sizing: border-box !important;
-      }
-      .etiqueta-card {
-        border: 1px dashed #64748b !important;
-        box-shadow: none !important;
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-      }
-      .no-print { display: none !important; }
-    }
-
-    /* Efeito Ripple (Água) ao clicar */
-    .ripple {
-      position: relative;
-      overflow: hidden;
-    }
-    .ripple::after {
-      content: "";
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10, 10);
-      opacity: 0;
-      transition: transform .5s, opacity 1s;
-    }
-    .ripple:active::after {
-      transform: scale(0, 0);
-      opacity: .3;
-      transition: 0s;
-    }
-
-    /* Dimensões precisas das Etiquetas (6.8cm x 3.8cm) */
-    .etiqueta-card {
-      width: 6.8cm;
-      height: 3.8cm;
-      border: 1.5px dashed #475569;
-      padding: 6px 8px;
-      box-sizing: border-box;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      page-break-inside: avoid;
-      break-inside: avoid;
-      border-radius: 4px;
-    }
-
-    .etiqueta-notacao {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-weight: 900;
-      font-size: 12.5px;
-      color: #0f172a;
-      letter-spacing: -0.2px;
-    }
-
-    .tag-cor-lombada {
-      font-size: 8.5px;
-      font-weight: 900;
-      padding: 2px 6px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      display: inline-block;
-      white-space: nowrap;
-      line-height: 1;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
-
-    /* Mapeamento Rigoroso de Cores de Lombada */
-    .cor-ROSA {
-      background-color: #f472b6 !important;
-      color: #831843 !important;
-      border: 1px solid #db2777 !important;
-    }
-    .cor-VERDE-CLARO {
-      background-color: #bef264 !important;
-      color: #365314 !important;
-      border: 1px solid #65a30d !important;
-    }
-    .cor-VERDE {
-      background-color: #86efac !important;
-      color: #14532d !important;
-      border: 1px solid #16a34a !important;
-    }
-    .cor-AZUL-CLARO {
-      background-color: #7dd3fc !important;
-      color: #0c4a6e !important;
-      border: 1px solid #0284c7 !important;
-    }
-    .cor-AZUL {
-      background-color: #93c5fd !important;
-      color: #1e3a8a !important;
-      border: 1px solid #2563eb !important;
-    }
-    .cor-AMARELO {
-      background-color: #fef08a !important;
-      color: #713f12 !important;
-      border: 1px solid #ca8a04 !important;
-    }
-    .cor-VERMELHO {
-      background-color: #fca5a5 !important;
-      color: #7f1d1d !important;
-      border: 1px solid #dc2626 !important;
-    }
-    .cor-ROXO {
-      background-color: #d8b4fe !important;
-      color: #581c87 !important;
-      border: 1px solid #9333ea !important;
-    }
-    .cor-LARANJA {
-      background-color: #fdba74 !important;
-      color: #7c2d12 !important;
-      border: 1px solid #ea580c !important;
-    }
-    .cor-CINZA {
-      background-color: #cbd5e1 !important;
-      color: #0f172a !important;
-      border: 1px solid #64748b !important;
-    }
-    .cor-BRANCO {
-      background-color: #ffffff !important;
-      color: #0f172a !important;
-      border: 1.5px solid #475569 !important;
-    }
-    .cor-PADRAO {
-      background-color: #e2e8f0 !important;
-      color: #334155 !important;
-      border: 1px solid #94a3b8 !important;
-    }
-
-    .etiqueta-titulo {
-      font-weight: 800;
-      font-size: 10.5px;
-      line-height: 1.2;
-      color: #0f172a;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      word-break: break-word;
-    }
-
-    .etiqueta-autor {
-      font-size: 9px;
-      color: #475569;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: 3px;
-    }
-
-    .etiqueta-rodape {
-      font-size: 9.5px;
-      font-weight: 800;
-      color: #1e293b;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .doris-header {
+      background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
     }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col antialiased">
 
-  <nav class="bg-emerald-800 text-white p-4 shadow-md no-print">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+  <!-- CABEÇALHO PRINCIPAL -->
+  <header class="doris-header text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <i class="fa-solid fa-book-bookmark text-2xl text-emerald-300"></i>
+        <div class="w-11 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center font-black text-xs tracking-wider border border-white/20 flex-shrink-0">
+          CDDir
+        </div>
         <div>
-          <h1 class="font-bold text-lg leading-none">Biblioteca SBPE - Dóris</h1>
-          <p class="text-xs text-emerald-200 mt-0.5">Acervo Classificação Dóris de Vasconcellos (Infantil)</p>
+          <h1 class="text-base sm:text-lg font-black tracking-tight leading-tight">Acervo Jurídico — Dóris (CDDir)</h1>
+          <p class="text-[11px] text-emerald-100/90 font-medium">Classificação Decimal de Direito • Dóris de Queiroz Carvalho</p>
         </div>
       </div>
-      
-      <div class="flex items-center gap-2">
-        <button onclick="abrirModalEtiquetas()" class="ripple bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2 rounded-lg transition shadow flex items-center gap-1.5">
-          <i class="fa-solid fa-print"></i>
-          <span>Imprimir Etiquetas</span>
-        </button>
-        <span id="contadorObras" class="bg-emerald-950/60 text-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-700/50">0 obras</span>
-      </div>
-    </div>
-  </nav>
 
-  <main class="max-w-6xl mx-auto p-4 space-y-4 no-print">
-    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
-      <div class="flex gap-2">
-        <div class="relative flex-1">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="inputPesquisa" onkeydown="if(event.key==='Enter') executarPesquisaManualmente()" placeholder="Pesquise por Título, Autor, Assunto (Gênero), Notação ou Cor de Lombada..." class="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+      <button type="button" onclick="carregarAcervo()" title="Sincronizar com a Planilha" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition flex items-center gap-1.5 flex-shrink-0">
+        <svg id="iconSync" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+        <span class="hidden sm:inline">Atualizar Acervo</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- BARRA DE BUSCA E FILTROS -->
+  <main class="max-w-7xl mx-auto w-full px-4 py-5 flex-1 space-y-4">
+
+    <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+        <!-- Campo de Busca -->
+        <div class="md:col-span-8 relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input type="text" id="campoBusca" oninput="aplicarFiltros()" placeholder="Buscar por título, autor, notação CDDir (ex: 341.27 B823) ou assunto..." class="w-full pl-10 pr-9 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent">
+          <button type="button" id="btnLimparBusca" onclick="limparCampoBusca()" title="Limpar busca" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 font-bold text-xs">
+            ✕
+          </button>
         </div>
-        <button onclick="executarPesquisaManualmente()" class="ripple bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow flex items-center gap-1.5">
-          <i class="fa-solid fa-search"></i>
-          <span>Pesquisar</span>
-        </button>
+
+        <!-- Ordenação -->
+        <div class="md:col-span-4">
+          <select id="selectOrdenacao" onchange="aplicarFiltros()" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700">
+            <option value="RECENTES">Mais Recentes (Últimos Catalogados)</option>
+            <option value="NOTACAO_ASC">Notação CDDir (Crescente)</option>
+            <option value="TITULO_ASC">Título (A → Z)</option>
+            <option value="AUTOR_ASC">Autor (A → Z)</option>
+          </select>
+        </div>
       </div>
-      
-      <div id="bannerSugestao" class="hidden text-xs bg-amber-50 text-amber-800 p-2 rounded-lg border border-amber-200 flex items-center gap-2">
-        <i class="fa-solid fa-lightbulb text-amber-500"></i>
-        <span>Você quis dizer: <strong id="termoSugestao" class="underline cursor-pointer hover:text-amber-900" onclick="aplicarSugestao()"></strong>?</span>
+
+      <!-- Pílulas de Filtro por Classe CDDir -->
+      <div class="pt-2 border-t border-slate-100">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Filtrar por Ramo do Direito (CDDir):</span>
+          <span id="resumoContagem" class="text-[11px] font-bold text-slate-500">Carregando acervo...</span>
+        </div>
+        <div id="containerFiltrosClasse" class="flex flex-wrap gap-1.5"></div>
       </div>
+    </section>
+
+    <!-- BANNER "VOCÊ QUIS DIZER..." -->
+    <div id="bannerSugestao" class="hidden bg-amber-50 border border-amber-300 px-4 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm"></div>
+
+    <!-- ESTADO DE CARREGAMENTO / ERRO -->
+    <div id="statusCarregamento" class="bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-2">
+      <div class="w-9 h-9 border-4 border-emerald-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p class="text-xs font-bold text-slate-700">Sincronizando catálogo jurídico com a planilha CDDir...</p>
     </div>
 
-    <div id="gridObras" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <p class="col-span-full text-center text-slate-400 py-10 text-xs">Carregando acervo Dóris...</p>
+    <!-- GRADE DE LIVROS -->
+    <section id="gridAcervo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
+
+    <!-- ESTADO VAZIO -->
+    <div id="estadoVazio" class="hidden bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-2">
+      <p class="text-sm font-bold text-slate-700">Nenhuma obra jurídica encontrada com esses filtros.</p>
+      <p class="text-xs text-slate-500">Tente limpar a busca ou selecionar "Todas".</p>
     </div>
   </main>
 
   <!-- MODAL FICHA DA OBRA -->
-  <div id="modalFicha" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 transform transition-all">
-      <div class="bg-emerald-800 text-white p-4 flex justify-between items-center">
-        <h3 class="font-bold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-book-open"></i>
-          <span>Ficha da Obra</span>
-        </h3>
-        <button onclick="fecharFicha()" class="text-emerald-200 hover:text-white font-bold text-lg">✕</button>
-      </div>
-
-      <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
-        <div class="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
-          <div class="w-36 h-48 bg-slate-200/60 rounded-lg overflow-hidden shadow-md flex-shrink-0 relative flex items-center justify-center p-1 group">
-            <img id="fichaCapa" src="" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
-            <span id="fichaCor" class="absolute top-2 right-2 tag-cor-lombada"></span>
-          </div>
-          <div class="space-y-2 text-center sm:text-left flex-1">
-            <span id="fichaNotacao" class="inline-block bg-slate-100 text-slate-800 font-mono text-xs font-bold px-2.5 py-1 rounded border border-slate-200"></span>
-            <h2 id="fichaTitulo" class="font-bold text-slate-900 text-base leading-tight"></h2>
-            <p id="fichaAutor" class="text-xs text-slate-600 font-medium"></p>
-            <div class="flex gap-2 text-[11px] text-slate-500 font-semibold pt-1">
-              <span id="fichaExemplar"></span>
-              <span id="fichaVolume"></span>
+  <div id="modalDetalhes" class="hidden fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 flex items-center justify-center p-4" onclick="if(event.target===this) fecharModalDetalhes()">
+    <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
+      <div id="detalheFaixaTopo" class="h-3 w-full bg-emerald-700"></div>
+      <div class="p-5 space-y-4">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex gap-3.5">
+            <img id="detalheCapa" src="" alt="Capa" class="w-20 h-28 object-cover rounded-xl border border-slate-200 shadow-sm bg-slate-100 flex-shrink-0">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span id="detalheNotacao" class="font-mono text-xs font-black px-2 py-0.5 rounded bg-slate-900 text-white"></span>
+                <span id="detalheExemplar" class="hidden text-[11px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900"></span>
+                <span id="detalheVolume" class="hidden text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900"></span>
+              </div>
+              <h2 id="detalheTitulo" class="text-sm font-black text-slate-900 leading-snug"></h2>
+              <p id="detalheAutor" class="text-xs font-semibold text-slate-600"></p>
             </div>
           </div>
+          <button type="button" onclick="fecharModalDetalhes()" class="text-slate-400 hover:text-slate-700 font-bold p-1">✕</button>
         </div>
 
-        <hr class="border-slate-200">
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2.5 text-xs">
+          <div>
+            <span class="font-bold text-slate-700">Ramo CDDir: </span>
+            <span id="detalheClasseBadge" class="inline-block font-bold px-2 py-0.5 rounded-full text-[11px] bg-emerald-100 text-emerald-900"></span>
+            <span id="detalheCorBadge" class="hidden ml-1 inline-block font-bold px-2 py-0.5 rounded-full text-[11px]"></span>
+          </div>
 
-        <div class="space-y-2">
-          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-tags text-emerald-600"></i>
-            <span>Assuntos (Temas Correlacionados):</span>
-          </h4>
-          <div id="fichaAssuntos" class="flex flex-wrap gap-1.5"></div>
+          <div class="space-y-1.5">
+            <span class="font-bold text-slate-700 block">Assuntos (clique para ver obras relacionadas):</span>
+            <div id="detalheAssuntoTags" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <div class="pt-1 border-t border-slate-200/60">
+            <span class="font-bold text-slate-700">Data de Registro: </span>
+            <span id="detalheData" class="text-slate-500"></span>
+          </div>
         </div>
-      </div>
 
-      <div class="bg-slate-50 p-3 border-t border-slate-100 text-right">
-        <button onclick="fecharFicha()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-300 transition">Fechar</button>
+        <div class="flex justify-end pt-1">
+          <button type="button" onclick="fecharModalDetalhes()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold">Fechar Ficha</button>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- MODAL IMPRESSÃO -->
-  <div id="modalEtiquetas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
-    <div class="bg-white rounded-2xl max-w-xl w-full p-5 shadow-2xl space-y-4 border border-slate-100">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-          <i class="fa-solid fa-tags text-emerald-700"></i>
-          <span>Imprimir Etiquetas de Lombada</span>
-        </h3>
-        <button onclick="fecharModalEtiquetas()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">✕</button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Data Inicial:</label>
-          <input type="date" id="dataInicio" onchange="gerarPreviewEtiquetas()" class="w-full p-2 rounded-lg border border-slate-300">
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Data Final:</label>
-          <input type="date" id="dataFim" onchange="gerarPreviewEtiquetas()" class="w-full p-2 rounded-lg border border-slate-300">
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="fecharModalEtiquetas()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Cancelar</button>
-        <button onclick="window.print()" class="ripple px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1.5">
-          <i class="fa-solid fa-print"></i>
-          <span>Imprimir Agora</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="areaImpressao" class="hidden"></div>
 
   <script>
-    const SPREADSHEET_ID = '1qp9NMs2qTPEjd9ks5TjG3Gq27A6zWnqfhVZM0kJB6gw';
-    const SHEET_NAME = 'Doris';
-    let todosOsLivros = [];
-    let palavraSugestaoAtual = '';
+    const SPREADSHEET_ID = '1o0ZIgtgFI7uncf-dETXs4aSj71pEzMaHND4JmBqv39A';
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-    window.onload = function() { carregarDadosPlanilha(); };
+    const CLASSES_CDDIR = {
+      '340': '340 • Direito Geral / Filosofia',
+      '341': '341 • Direito Público / Constitucional / Admin.',
+      '342': '342 • Direito Privado / Civil / Comercial',
+      '343': '343 • Direito Penal / Processo Penal',
+      '344': '344 • Direito do Trabalho / Previdenciário',
+      '345': '345 • Direito Processual Civil',
+      '346': '346 • Direito Tributário / Financeiro',
+      '347': '347 • Direito Internacional',
+      '348': '348 • Direito Canônico / Eclesiástico',
+      '349': '349 • Legislação / Códigos / Jurisprudência',
+      'OUTRAS': 'Outras Classes / Referência'
+    };
 
-    async function carregarDadosPlanilha() {
-      const sheetQuery = SHEET_NAME ? `&sheet=${encodeURIComponent(SHEET_NAME)}` : '';
-      const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json${sheetQuery}&_ts=${Date.now()}`;
+    const CORES_LOMBADA = {
+      'AZUL': { bg: '#1d4ed8', badgeBg: '#dbeafe', badgeText: '#1e40af' },
+      'ROXO': { bg: '#7e22ce', badgeBg: '#f3e8ff', badgeText: '#6b21a8' },
+      'VERMELHO': { bg: '#dc2626', badgeBg: '#fee2e2', badgeText: '#991b1b' },
+      'VERDE': { bg: '#15803d', badgeBg: '#dcfce7', badgeText: '#166534' },
+      'AMARELO': { bg: '#facc15', badgeBg: '#fef9c3', badgeText: '#854d0e' },
+      'MARROM': { bg: '#78350f', badgeBg: '#fef3c7', badgeText: '#78350f' },
+      'LARANJA': { bg: '#ea580c', badgeBg: '#ffedd5', badgeText: '#9a3412' },
+      'CINZA': { bg: '#64748b', badgeBg: '#f1f5f9', badgeText: '#334155' },
+      'PRETO': { bg: '#0f172a', badgeBg: '#e2e8f0', badgeText: '#0f172a' }
+    };
 
-      try {
-        const response = await fetch(url);
-        const text = await response.text();
-        const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-        const json = JSON.parse(jsonString);
+    let acervoCompleto = [];
+    let acervoFiltrado = [];
+    let classeFiltroAtiva = 'TODAS';
+    let vocabularioPalavras = new Map();
+    let vocabularioFrases = [];
 
-        if (!json.table || !json.table.rows) {
-          document.getElementById('gridObras').innerHTML = `<p class="col-span-full text-center text-slate-400 py-10 text-xs">Nenhuma obra cadastrada.</p>`;
-          return;
-        }
-
-        todosOsLivros = json.table.rows.map((row, index) => {
-          const c = row.c || [];
-          return {
-            id: index,
-            notacao: getCellVal(c, 0),
-            exemplar: getCellVal(c, 1),
-            volume: getCellVal(c, 2),
-            titulo: getCellVal(c, 3),
-            autor: getCellVal(c, 4),
-            assunto: getCellVal(c, 5),
-            corLombada: getCellVal(c, 6).toUpperCase() || 'VERDE',
-            capa: getCellVal(c, 7),
-            dataRegistro: getCellVal(c, 8)
-          };
-        }).filter(l => l.titulo !== '' || l.notacao !== '');
-
-        document.getElementById('contadorObras').innerText = `${todosOsLivros.length} obras`;
-        renderizarGrid(todosOsLivros);
-        gerarPreviewEtiquetas();
-      } catch (err) {
-        console.error("Erro ao carregar:", err);
-        document.getElementById('gridObras').innerHTML = `<p class="col-span-full text-center text-red-500 font-bold py-10 text-xs">Erro de conexão com a planilha.</p>`;
-      }
+    function extrairClasseCDDir(notacaoRaw) {
+      const m = String(notacaoRaw || '').trim().match(/^(34[0-9])/);
+      return m ? m[1] : 'OUTRAS';
     }
 
-    function getCellVal(cells, index) {
-      if (!cells || !cells[index]) return '';
-      const val = cells[index].f !== undefined && cells[index].f !== null ? cells[index].f : cells[index].v;
-      if (val === null || val === undefined) return '';
-      return String(val).trim();
+    function limparCampoUnico(valor, tipo) {
+      const v = String(valor || '').trim();
+      const lower = v.toLowerCase();
+      if (tipo === 'EXEMPLAR' && ['1', '1º', '1º exemplar', 'ex. 1', 'único', 'unico'].includes(lower)) return '';
+      if (tipo === 'VOLUME' && ['único', 'unico', '1', 'vol. 1', 'v. 1', 'volume 1'].includes(lower)) return '';
+      return v;
     }
 
-    function renderizarGrid(livros) {
-      const grid = document.getElementById('gridObras');
-      if (livros.length === 0) {
-        grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-10 text-xs">Nenhuma obra encontrada.</p>`;
-        return;
-      }
-
-      grid.innerHTML = livros.map(livro => `
-        <div onclick="abrirFicha(${livro.id})" class="ripple group bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer">
-          <div class="h-48 bg-slate-200/60 overflow-hidden relative flex items-center justify-center p-1.5">
-            <img src="${livro.capa || 'https://via.placeholder.com/150x200?text=Sem+Capa'}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out drop-shadow">
-            <span class="absolute top-2 right-2 tag-cor-lombada cor-${obterClasseCor(livro.corLombada)}">${livro.corLombada}</span>
-          </div>
-          <div class="p-3 space-y-1 bg-white">
-            <span class="inline-block bg-slate-100 text-slate-800 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-slate-200">${livro.notacao}</span>
-            <h4 class="font-bold text-xs text-slate-900 truncate group-hover:text-emerald-700 transition-colors">${livro.titulo}</h4>
-            <p class="text-[10px] text-slate-500 truncate">${livro.autor}</p>
-          </div>
-        </div>
-      `).join('');
+    function normalizarUrlCapa(urlRaw) {
+      const u = String(urlRaw || '').trim();
+      if (!u) return '';
+      const matchId = u.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/);
+      if (matchId && matchId[1]) return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
+      return u;
     }
 
-    function abrirFicha(id) {
-      const livro = todosOsLivros.find(l => l.id === id);
-      if (!livro) return;
-
-      document.getElementById('fichaCapa').src = livro.capa || 'https://via.placeholder.com/150x200?text=Sem+Capa';
-      document.getElementById('fichaTitulo').innerText = livro.titulo;
-      document.getElementById('fichaAutor').innerText = livro.autor || 'Autor não informado';
-      document.getElementById('fichaNotacao').innerText = livro.notacao || 'S/N';
-      document.getElementById('fichaExemplar').innerText = livro.exemplar ? `Exemplar: ${livro.exemplar}` : '';
-      document.getElementById('fichaVolume').innerText = livro.volume ? `Volume: ${livro.volume}` : '';
-      
-      const badgeCor = document.getElementById('fichaCor');
-      badgeCor.innerText = livro.corLombada;
-      badgeCor.className = `absolute top-2 right-2 tag-cor-lombada cor-${obterClasseCor(livro.corLombada)}`;
-
-      const divAssuntos = document.getElementById('fichaAssuntos');
-      if (livro.assunto) {
-        const assuntos = livro.assunto.split(/[,;-]/).map(a => a.trim()).filter(a => a !== '');
-        divAssuntos.innerHTML = assuntos.map(a => `
-          <span onclick="pesquisarPorAssunto('${a}')" class="ripple bg-emerald-50 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-emerald-200 hover:bg-emerald-200 cursor-pointer transition">
-            # ${a}
-          </span>
-        `).join('');
-      } else {
-        divAssuntos.innerHTML = `<span class="text-slate-400 text-xs italic">Nenhum assunto especificado.</span>`;
-      }
-
-      document.getElementById('modalFicha').classList.remove('hidden');
+    function gerarSvgCapaPlaceholder(notacao, bgColor = '#047857') {
+      const safeNotacao = (notacao || 'CDDir').replace(/[<>&"']/g, '');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320" viewBox="0 0 240 320">
+        <rect width="240" height="320" fill="#f8fafc"/>
+        <rect width="28" height="320" fill="${bgColor}"/>
+        <rect x="48" y="44" width="164" height="232" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+        <text x="130" y="145" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1e293b" text-anchor="middle">${safeNotacao}</text>
+        <text x="130" y="175" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">ACERVO CDDir</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
     }
 
-    function fecharFicha() {
-      document.getElementById('modalFicha').classList.add('hidden');
-    }
-
-    function pesquisarPorAssunto(assunto) {
-      fecharFicha();
-      document.getElementById('inputPesquisa').value = assunto;
-      executarPesquisaManualmente();
-    }
-
-    function executarPesquisaManualmente() {
-      filtrarObras();
-    }
-
-    function filtrarObras() {
-      const termo = document.getElementById('inputPesquisa').value.toLowerCase().trim();
-      const banner = document.getElementById('bannerSugestao');
-
-      if (!termo) {
-        banner.classList.add('hidden');
-        renderizarGrid(todosOsLivros);
-        return;
-      }
-
-      const filtrados = todosOsLivros.filter(l => 
-        l.titulo.toLowerCase().includes(termo) ||
-        l.autor.toLowerCase().includes(termo) ||
-        l.notacao.toLowerCase().includes(termo) ||
-        l.corLombada.toLowerCase().includes(termo) ||
-        l.assunto.toLowerCase().includes(termo)
-      );
-
-      if (filtrados.length === 0 && termo.length >= 3) {
-        const sugestao = buscarSugestaoAproximada(termo);
-        if (sugestao) {
-          palavraSugestaoAtual = sugestao;
-          document.getElementById('termoSugestao').innerText = sugestao;
-          banner.classList.remove('hidden');
-        } else {
-          banner.classList.add('hidden');
-        }
-      } else {
-        banner.classList.add('hidden');
-      }
-
-      renderizarGrid(filtrados);
-    }
-
-    function aplicarSugestao() {
-      if (palavraSugestaoAtual) {
-        document.getElementById('inputPesquisa').value = palavraSugestaoAtual;
-        filtrarObras();
-      }
-    }
-
-    function buscarSugestaoAproximada(termo) {
-      let vocabulario = new Set();
-      todosOsLivros.forEach(l => {
-        l.titulo.split(' ').forEach(w => vocabulario.add(w.toLowerCase()));
-        l.autor.split(' ').forEach(w => vocabulario.add(w.toLowerCase()));
-        l.assunto.split(/[,;\s]+/).forEach(w => vocabulario.add(w.toLowerCase()));
-      });
-
-      let melhorPalavra = '';
-      let menorDistancia = 999;
-
-      vocabulario.forEach(palavra => {
-        if (palavra.length >= 3) {
-          const dist = calcularLevenshtein(termo, palavra);
-          if (dist < menorDistancia && dist <= 2) {
-            menorDistancia = dist;
-            melhorPalavra = palavra;
-          }
-        }
-      });
-
-      return melhorPalavra;
-    }
-
-    function calcularLevenshtein(a, b) {
-      const matrix = [];
-      for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-      for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-      for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-          if (b.charAt(i - 1) === a.charAt(j - 1)) {
-            matrix[i][j] = matrix[i - 1][j - 1];
-          } else {
-            matrix[i][j] = Math.min(
-              matrix[i - 1][j - 1] + 1,
-              matrix[i][j - 1] + 1,
-              matrix[i - 1][j] + 1
-            );
-          }
-        }
-      }
-      return matrix[b.length][a.length];
-    }
-
-    function normalizarDataParaISO(dataStr) {
-      if (!dataStr) return '';
-      let s = String(dataStr).trim();
-
-      if (s.includes('Date(')) {
-        const m = s.match(/\d+/g);
-        if (m && m.length >= 3) {
-          const ano = m[0];
-          const mes = String(parseInt(m[1], 10) + 1).padStart(2, '0');
-          const dia = String(m[2]).padStart(2, '0');
-          return `${ano}-${mes}-${dia}`;
-        }
-      }
-
-      s = s.split(' ')[0].split('T')[0];
-
-      if (s.includes('/')) {
-        const partes = s.split('/');
-        if (partes.length === 3) {
-          const dia = partes[0].padStart(2, '0');
-          const mes = partes[1].padStart(2, '0');
-          const ano = partes[2];
-          return `${ano}-${mes}-${dia}`;
-        }
-      }
-
-      if (s.includes('-')) {
-        const partes = s.split('-');
-        if (partes.length === 3 && partes[0].length === 4) {
-          return s;
-        }
-      }
-
+    function extrairCelula(row, idx) {
+      if (!row || !row.c || !row.c[idx]) return '';
+      const cell = row.c[idx];
+      if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
+      if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
       return '';
     }
 
-    function gerarPreviewEtiquetas() {
-      const area = document.getElementById('areaImpressao');
-      const dInicio = document.getElementById('dataInicio').value;
-      const dFim = document.getElementById('dataFim').value;
+    function normalizarBusca(str) {
+      return String(str || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
 
-      const filtrados = todosOsLivros.filter(l => {
-        if (!dInicio && !dFim) return true;
-        const dataISO = normalizarDataParaISO(l.dataRegistro);
-        if (!dataISO) return true;
-        if (dInicio && dataISO < dInicio) return false;
-        if (dFim && dataISO > dFim) return false;
-        return true;
+    function construirIndiceVocabulario(lista) {
+      vocabularioPalavras = new Map();
+      const mapaFrases = new Map();
+
+      lista.forEach(item => {
+        const textoCompleto = `${item.titulo} ${item.autor} ${item.assunto}`;
+        const palavras = normalizarBusca(textoCompleto)
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter(p => p.length >= 4);
+
+        palavras.forEach(p => {
+          vocabularioPalavras.set(p, (vocabularioPalavras.get(p) || 0) + 1);
+        });
+
+        if (item.assunto) {
+          item.assunto.split(/[,;]+/).forEach(desc => {
+            const limpo = desc.trim();
+            const norm = normalizarBusca(limpo);
+            if (norm.length >= 4) {
+              const atual = mapaFrases.get(norm);
+              if (atual) atual.freq++;
+              else mapaFrases.set(norm, { original: limpo, norm, freq: 1 });
+            }
+          });
+        }
       });
 
-      area.innerHTML = filtrados.map(livro => {
-        let textEx = '';
-        if (livro.exemplar) {
-          const ex = livro.exemplar.trim();
-          const exLower = ex.toLowerCase();
-          if (ex !== '' && !exLower.includes('1º') && exLower !== 'ex. 1' && exLower !== '1') {
-            textEx = ex;
+      vocabularioFrases = Array.from(mapaFrases.values());
+    }
+
+    function distanciaLevenshtein(a, b) {
+      if (a === b) return 0;
+      const m = a.length, n = b.length;
+      if (m === 0) return n;
+      if (n === 0) return m;
+
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1));
+      for (let i = 0; i <= m; i++) dp[i][0] = i;
+      for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          const custo = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + custo);
+        }
+      }
+      return dp[m][n];
+    }
+
+    function contarMatchesGlobais(termoNorm) {
+      if (!termoNorm) return 0;
+      let count = 0;
+      for (let i = 0; i < acervoCompleto.length; i++) {
+        if (acervoCompleto[i].indiceBusca.includes(termoNorm)) count++;
+      }
+      return count;
+    }
+
+    function sugerirCorrecaoBusca(queryRaw) {
+      const queryNorm = normalizarBusca(queryRaw);
+      if (!queryNorm || queryNorm.length < 4) return null;
+
+      const tokens = queryNorm.split(/\s+/);
+      let houveTroca = false;
+
+      const tokensCorrigidos = tokens.map(token => {
+        if (token.length < 4 || vocabularioPalavras.has(token)) return token;
+        const maxDist = token.length <= 5 ? 1 : (token.length <= 9 ? 2 : 3);
+        let melhorPalavra = token, menorDist = maxDist + 1, maiorFreq = -1;
+
+        vocabularioPalavras.forEach((freq, candidata) => {
+          if (Math.abs(candidata.length - token.length) > maxDist) return;
+          const dist = distanciaLevenshtein(token, candidata);
+          if (dist <= maxDist && (dist < menorDist || (dist === menorDist && freq > maiorFreq))) {
+            menorDist = dist;
+            maiorFreq = freq;
+            melhorPalavra = candidata;
+          }
+        });
+
+        if (melhorPalavra !== token) houveTroca = true;
+        return melhorPalavra;
+      });
+
+      if (houveTroca) {
+        const fraseSugerida = tokensCorrigidos.join(' ');
+        const qtd = contarMatchesGlobais(fraseSugerida);
+        if (qtd > 0) return { sugestao: fraseSugerida, total: qtd };
+      }
+
+      if (queryNorm.length <= 45) {
+        const maxDistFrase = Math.max(2, Math.floor(queryNorm.length * 0.25));
+        let melhorFrase = null, menorDistFrase = maxDistFrase + 1, maiorFreqFrase = -1;
+
+        for (let i = 0; i < vocabularioFrases.length; i++) {
+          const item = vocabularioFrases[i];
+          if (Math.abs(item.norm.length - queryNorm.length) > maxDistFrase) continue;
+          const dist = distanciaLevenshtein(queryNorm, item.norm);
+          if (dist > 0 && dist <= maxDistFrase && (dist < menorDistFrase || (dist === menorDistFrase && item.freq > maiorFreqFrase))) {
+            menorDistFrase = dist;
+            maiorFreqFrase = item.freq;
+            melhorFrase = item.original;
           }
         }
 
-        let textVol = '';
-        if (livro.volume) {
-          const v = livro.volume.trim();
-          const vLower = v.toLowerCase();
-          if (v !== '' && vLower !== 'único' && vLower !== 'unico' && vLower !== '1' && vLower !== 'vol. 1' && vLower !== 'v. 1') {
-            textVol = `Vol. ${v}`;
-          }
+        if (melhorFrase) {
+          const qtd = contarMatchesGlobais(normalizarBusca(melhorFrase));
+          if (qtd > 0) return { sugestao: melhorFrase, total: qtd };
         }
+      }
 
-        const classeCor = obterClasseCor(livro.corLombada);
+      return null;
+    }
+
+    async function carregarAcervo() {
+      const iconSync = document.getElementById('iconSync');
+      const statusEl = document.getElementById('statusCarregamento');
+      iconSync.classList.add('animate-spin');
+      statusEl.classList.remove('hidden');
+
+      try {
+        const resp = await fetch(`${GVIZ_URL}&_t=${Date.now()}`);
+        const texto = await resp.text();
+        const matchJson = texto.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/);
+        if (!matchJson) throw new Error('Resposta inválida da planilha Google.');
+
+        const dados = JSON.parse(matchJson[1]);
+        const rows = (dados.table && dados.table.rows) ? dados.table.rows : [];
+
+        const lista = [];
+        rows.forEach((row, index) => {
+          const notacao = extrairCelula(row, 0);
+          const exemplar = limparCampoUnico(extrairCelula(row, 1), 'EXEMPLAR');
+          const volume = limparCampoUnico(extrairCelula(row, 2), 'VOLUME');
+          const titulo = extrairCelula(row, 3);
+          const autor = extrairCelula(row, 4);
+          const assunto = extrairCelula(row, 5);
+          const cor = extrairCelula(row, 6).toUpperCase();
+          const capa = normalizarUrlCapa(extrairCelula(row, 7));
+          const dataRegistro = extrairCelula(row, 8);
+
+          if (index === 0 && (titulo.toLowerCase() === 'título' || titulo.toLowerCase() === 'titulo' || notacao.toLowerCase().includes('notação'))) {
+            return;
+          }
+          if (!titulo && !notacao) return;
+
+          const classe = extrairClasseCDDir(notacao);
+          const corValida = (cor && cor !== 'N/A') ? cor : '';
+
+          lista.push({
+            id: `obra_${index + 2}`,
+            notacao,
+            classe,
+            exemplar,
+            volume,
+            titulo: titulo || 'Sem Título',
+            autor: autor || 'Autor não informado',
+            assunto,
+            cor: corValida,
+            capa,
+            dataRegistro,
+            indiceBusca: normalizarBusca(`${notacao} ${titulo} ${autor} ${assunto} ${corValida}`)
+          });
+        });
+
+        acervoCompleto = lista;
+        construirIndiceVocabulario(lista);
+        renderizarFiltrosClasse();
+        aplicarFiltros();
+      } catch (err) {
+        console.error('Erro ao carregar planilha:', err);
+        statusEl.innerHTML = `
+          <p class="text-xs font-bold text-rose-700">Não foi possível carregar os dados da planilha.</p>
+          <p class="text-[11px] text-slate-500">${err.message}</p>
+          <button onclick="carregarAcervo()" class="mt-2 px-4 py-1.5 rounded-lg bg-emerald-700 text-white text-xs font-bold">Tentar Novamente</button>
+        `;
+        return;
+      } finally {
+        iconSync.classList.remove('animate-spin');
+        statusEl.classList.add('hidden');
+      }
+    }
+
+    function renderizarFiltrosClasse() {
+      const container = document.getElementById('containerFiltrosClasse');
+      const contagem = {};
+      acervoCompleto.forEach(item => {
+        contagem[item.classe] = (contagem[item.classe] || 0) + 1;
+      });
+
+      const todasAtiva = classeFiltroAtiva === 'TODAS';
+      let html = `
+        <button type="button" onclick="filtrarPorClasse('TODAS')"
+          class="px-2.5 py-1 rounded-full text-[11px] font-bold border transition ${todasAtiva ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'}">
+          Todas (${acervoCompleto.length})
+        </button>
+      `;
+
+      Object.keys(CLASSES_CDDIR).forEach(clsKey => {
+        const qtd = contagem[clsKey] || 0;
+        if (clsKey === 'OUTRAS' && qtd === 0) return;
+        const ativa = classeFiltroAtiva === clsKey;
+
+        html += `
+          <button type="button" onclick="filtrarPorClasse('${clsKey}')"
+            class="px-2.5 py-1 rounded-full text-[11px] font-bold border transition flex items-center gap-1 ${ativa ? 'ring-2 ring-offset-1 ring-emerald-800 bg-emerald-50 border-emerald-700 text-emerald-950 shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}">
+            <span>${CLASSES_CDDIR[clsKey]}</span>
+            <span class="text-[10px] opacity-70">(${qtd})</span>
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function filtrarPorClasse(cls) {
+      classeFiltroAtiva = cls;
+      renderizarFiltrosClasse();
+      aplicarFiltros();
+    }
+
+    function limparCampoBusca() {
+      const input = document.getElementById('campoBusca');
+      input.value = '';
+      aplicarFiltros();
+      input.focus();
+    }
+
+    function aplicarSugestaoBusca(termoSugerido) {
+      const input = document.getElementById('campoBusca');
+      input.value = termoSugerido;
+      classeFiltroAtiva = 'TODAS';
+      renderizarFiltrosClasse();
+      aplicarFiltros();
+    }
+
+    function filtrarPorAssuntoTag(el) {
+      const assunto = decodeURIComponent(el.getAttribute('data-assunto') || '');
+      if (!assunto) return;
+
+      fecharModalDetalhes();
+      classeFiltroAtiva = 'TODAS';
+      renderizarFiltrosClasse();
+
+      const input = document.getElementById('campoBusca');
+      input.value = assunto;
+      aplicarFiltros();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function aplicarFiltros() {
+      const rawBusca = document.getElementById('campoBusca').value.trim();
+      const termo = normalizarBusca(rawBusca);
+      const ordenacao = document.getElementById('selectOrdenacao').value;
+      const btnLimpar = document.getElementById('btnLimparBusca');
+
+      if (rawBusca.length > 0) btnLimpar.classList.remove('hidden');
+      else btnLimpar.classList.add('hidden');
+
+      let filtrados = acervoCompleto.filter(item => {
+        if (classeFiltroAtiva !== 'TODAS' && item.classe !== classeFiltroAtiva) return false;
+        if (!termo) return true;
+        return item.indiceBusca.includes(termo);
+      });
+
+      if (ordenacao === 'RECENTES') {
+        filtrados = [...filtrados].reverse();
+      } else if (ordenacao === 'TITULO_ASC') {
+        filtrados.sort((a, b) => a.titulo.localeCompare(b.titulo, 'pt-BR'));
+      } else if (ordenacao === 'AUTOR_ASC') {
+        filtrados.sort((a, b) => a.autor.localeCompare(b.autor, 'pt-BR'));
+      } else if (ordenacao === 'NOTACAO_ASC') {
+        filtrados.sort((a, b) => a.notacao.localeCompare(b.notacao, 'pt-BR'));
+      }
+
+      acervoFiltrado = filtrados;
+      document.getElementById('resumoContagem').innerText = `Exibindo ${filtrados.length} de ${acervoCompleto.length} obras`;
+
+      atualizarBannerSugestao(rawBusca, termo, filtrados.length);
+      renderizarGrid();
+    }
+
+    function atualizarBannerSugestao(rawBusca, termoNorm, qtdEncontrada) {
+      const banner = document.getElementById('bannerSugestao');
+
+      if (!termoNorm || qtdEncontrada > 0) {
+        banner.classList.add('hidden');
+        banner.innerHTML = '';
+        return;
+      }
+
+      const qtdEmTodas = classeFiltroAtiva !== 'TODAS' ? contarMatchesGlobais(termoNorm) : 0;
+      if (qtdEmTodas > 0) {
+        banner.innerHTML = `
+          <div class="flex items-center gap-2 text-amber-950">
+            <span>Nenhuma obra encontrada neste ramo, mas há <strong>${qtdEmTodas} obra(s)</strong> em outras classes CDDir.</span>
+          </div>
+          <button type="button" onclick="filtrarPorClasse('TODAS')" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black transition">
+            Mostrar em Todas as Classes
+          </button>
+        `;
+        banner.classList.remove('hidden');
+        return;
+      }
+
+      const correcao = sugerirCorrecaoBusca(rawBusca);
+      if (correcao) {
+        const safeTexto = correcao.sugestao.replace(/[<>&"']/g, '');
+        banner.innerHTML = `
+          <div class="flex flex-wrap items-center gap-1.5 text-amber-950">
+            <span class="font-semibold">Você quis dizer:</span>
+            <button type="button" onclick="aplicarSugestaoBusca('${safeTexto}')" class="font-black italic underline decoration-2 decoration-emerald-800 text-emerald-800 hover:text-emerald-950 text-sm cursor-pointer">
+              ${safeTexto}
+            </button>
+            <span class="text-[11px] text-amber-800 font-medium">(${correcao.total} ${correcao.total === 1 ? 'obra encontrada' : 'obras encontradas'})</span>
+          </div>
+          <button type="button" onclick="aplicarSugestaoBusca('${safeTexto}')" class="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold transition">
+            Buscar sugestão →
+          </button>
+        `;
+        banner.classList.remove('hidden');
+        return;
+      }
+
+      banner.classList.add('hidden');
+      banner.innerHTML = '';
+    }
+
+    function renderizarGrid() {
+      const grid = document.getElementById('gridAcervo');
+      const vazio = document.getElementById('estadoVazio');
+
+      if (acervoFiltrado.length === 0) {
+        grid.innerHTML = '';
+        vazio.classList.remove('hidden');
+        return;
+      }
+
+      vazio.classList.add('hidden');
+      grid.innerHTML = acervoFiltrado.map(obra => {
+        const corInfo = obra.cor ? CORES_LOMBADA[obra.cor] : null;
+        const faixaBg = corInfo ? corInfo.bg : '#047857';
+        const placeholder = gerarSvgCapaPlaceholder(obra.notacao, faixaBg);
+        const imgSrc = obra.capa || placeholder;
 
         return `
-          <div class="etiqueta-card">
-            <div class="flex justify-between items-center">
-              <span class="etiqueta-notacao">${livro.notacao}</span>
-              <span class="tag-cor-lombada cor-${classeCor}">${livro.corLombada || 'VERDE'}</span>
+          <article onclick="abrirModalDetalhes('${obra.id}')" class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition overflow-hidden flex flex-col justify-between cursor-pointer group">
+            <div>
+              <div class="h-2 w-full" style="background-color: ${faixaBg};"></div>
+              <div class="p-3.5 flex gap-3">
+                <div class="w-16 h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">
+                  <img src="${imgSrc}" onerror="this.onerror=null;this.src='${placeholder}'" alt="${obra.titulo}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                </div>
+
+                <div class="flex-1 min-w-0 space-y-1">
+                  <div class="flex flex-wrap items-center gap-1">
+                    <span class="font-mono text-[11px] font-black px-1.5 py-0.5 rounded bg-slate-900 text-white">
+                      ${obra.notacao || 'S/N'}
+                    </span>
+                    ${obra.exemplar ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900">${obra.exemplar}</span>` : ''}
+                    ${obra.volume ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900">${obra.volume}</span>` : ''}
+                  </div>
+
+                  <h2 class="text-xs font-extrabold text-slate-900 line-clamp-2 group-hover:text-emerald-800 leading-snug">
+                    ${obra.titulo}
+                  </h2>
+
+                  <p class="text-[11px] text-slate-600 font-medium truncate">${obra.autor}</p>
+                </div>
+              </div>
             </div>
-            <hr class="border-t border-slate-300 my-1">
-            <div class="flex-1 flex flex-col justify-center my-0.5">
-              <div class="etiqueta-titulo">${livro.titulo}</div>
-              <div class="etiqueta-autor">${livro.autor || 'Autor não informado'}</div>
+
+            <div class="px-3.5 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+              <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 truncate">
+                ${CLASSES_CDDIR[obra.classe] || obra.classe}
+              </span>
+              <span class="text-[11px] font-bold text-slate-500 group-hover:text-emerald-800 flex-shrink-0">
+                Ver ficha →
+              </span>
             </div>
-            <hr class="border-t border-slate-300 my-1">
-            <div class="etiqueta-rodape">
-              <span>${textEx}</span>
-              <span>${textVol}</span>
-            </div>
-          </div>
+          </article>
         `;
       }).join('');
     }
 
-    function obterClasseCor(cor) {
-      if (!cor) return 'PADRAO';
-      const c = String(cor).trim().toUpperCase();
-      if (c.includes('VERDE CLARO') || c.includes('VERDE-CLARO')) return 'VERDE-CLARO';
-      if (c.includes('AZUL CLARO') || c.includes('AZUL-CLARO')) return 'AZUL-CLARO';
-      if (c.includes('VERDE')) return 'VERDE';
-      if (c.includes('AZUL')) return 'AZUL';
-      if (c.includes('AMARELO')) return 'AMARELO';
-      if (c.includes('VERMELHO')) return 'VERMELHO';
-      if (c.includes('ROXO')) return 'ROXO';
-      if (c.includes('ROSA')) return 'ROSA';
-      if (c.includes('LARANJA')) return 'LARANJA';
-      if (c.includes('CINZA') || c.includes('PRETO')) return 'CINZA';
-      if (c.includes('BRANCO')) return 'BRANCO';
-      return 'PADRAO';
+    function abrirModalDetalhes(id) {
+      const obra = acervoCompleto.find(o => o.id === id);
+      if (!obra) return;
+
+      const corInfo = obra.cor ? CORES_LOMBADA[obra.cor] : null;
+      const faixaBg = corInfo ? corInfo.bg : '#047857';
+      const placeholder = gerarSvgCapaPlaceholder(obra.notacao, faixaBg);
+
+      document.getElementById('detalheFaixaTopo').style.backgroundColor = faixaBg;
+
+      const img = document.getElementById('detalheCapa');
+      img.src = obra.capa || placeholder;
+      img.onerror = function() { this.onerror = null; this.src = placeholder; };
+
+      document.getElementById('detalheNotacao').innerText = obra.notacao || 'SEM NOTAÇÃO';
+
+      const elEx = document.getElementById('detalheExemplar');
+      if (obra.exemplar) {
+        elEx.innerText = obra.exemplar;
+        elEx.classList.remove('hidden');
+      } else {
+        elEx.classList.add('hidden');
+      }
+
+      const elVol = document.getElementById('detalheVolume');
+      if (obra.volume) {
+        elVol.innerText = obra.volume;
+        elVol.classList.remove('hidden');
+      } else {
+        elVol.classList.add('hidden');
+      }
+
+      document.getElementById('detalheTitulo').innerText = obra.titulo;
+      document.getElementById('detalheAutor').innerText = obra.autor;
+      document.getElementById('detalheData').innerText = obra.dataRegistro || 'Não registrada';
+      document.getElementById('detalheClasseBadge').innerText = CLASSES_CDDIR[obra.classe] || obra.classe;
+
+      const corBadge = document.getElementById('detalheCorBadge');
+      if (obra.cor) {
+        corBadge.innerText = `Lombada: ${obra.cor}`;
+        corBadge.style.backgroundColor = corInfo ? corInfo.badgeBg : '#f1f5f9';
+        corBadge.style.color = corInfo ? corInfo.badgeText : '#334155';
+        corBadge.classList.remove('hidden');
+      } else {
+        corBadge.classList.add('hidden');
+      }
+
+      const containerTags = document.getElementById('detalheAssuntoTags');
+      const tags = String(obra.assunto || '')
+        .split(/[,;]+/)
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      if (tags.length > 0) {
+        containerTags.innerHTML = tags.map(tag => {
+          const safeLabel = tag.replace(/[<>&"']/g, '');
+          const encoded = encodeURIComponent(tag);
+          return `
+            <button type="button" data-assunto="${encoded}" onclick="filtrarPorAssuntoTag(this)"
+              class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-700 text-slate-700 hover:text-white border border-slate-300 hover:border-emerald-700 text-[11px] font-bold transition cursor-pointer">
+              <span>#</span>
+              <span>${safeLabel}</span>
+            </button>
+          `;
+        }).join('');
+      } else {
+        containerTags.innerHTML = '<span class="text-slate-500 italic">Nenhum assunto cadastrado</span>';
+      }
+
+      document.getElementById('modalDetalhes').classList.remove('hidden');
     }
 
-    function abrirModalEtiquetas() { document.getElementById('modalEtiquetas').classList.remove('hidden'); }
-    function fecharModalEtiquetas() { document.getElementById('modalEtiquetas').classList.add('hidden'); }
+    function fecharModalDetalhes() {
+      document.getElementById('modalDetalhes').classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', carregarAcervo);
   </script>
 </body>
 </html>
