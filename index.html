@@ -38,7 +38,6 @@
 
     <section class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
-        <!-- Campo de Busca -->
         <div class="md:col-span-8 relative">
           <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <input type="text" id="campoBusca" oninput="aplicarFiltros()" placeholder="Buscar por título, autor, notação CDDir (ex: 341.27 B823) ou assunto..." class="w-full pl-10 pr-9 py-2.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent">
@@ -47,7 +46,6 @@
           </button>
         </div>
 
-        <!-- Ordenação -->
         <div class="md:col-span-4">
           <select id="selectOrdenacao" onchange="aplicarFiltros()" class="w-full px-3 py-2.5 text-xs font-semibold rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700">
             <option value="RECENTES">Mais Recentes (Últimos Catalogados)</option>
@@ -58,7 +56,6 @@
         </div>
       </div>
 
-      <!-- Pílulas de Filtro por Classe CDDir -->
       <div class="pt-2 border-t border-slate-100">
         <div class="flex items-center justify-between mb-2">
           <span class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Filtrar por Ramo do Direito (CDDir):</span>
@@ -68,19 +65,15 @@
       </div>
     </section>
 
-    <!-- BANNER "VOCÊ QUIS DIZER..." -->
     <div id="bannerSugestao" class="hidden bg-amber-50 border border-amber-300 px-4 py-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm"></div>
 
-    <!-- ESTADO DE CARREGAMENTO / ERRO -->
     <div id="statusCarregamento" class="bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-2">
       <div class="w-9 h-9 border-4 border-emerald-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
       <p class="text-xs font-bold text-slate-700">Sincronizando catálogo jurídico com a planilha CDDir...</p>
     </div>
 
-    <!-- GRADE DE LIVROS -->
     <section id="gridAcervo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></section>
 
-    <!-- ESTADO VAZIO -->
     <div id="estadoVazio" class="hidden bg-white p-10 rounded-2xl border border-slate-200 text-center space-y-2">
       <p class="text-sm font-bold text-slate-700">Nenhuma obra jurídica encontrada com esses filtros.</p>
       <p class="text-xs text-slate-500">Tente limpar a busca ou selecionar "Todas".</p>
@@ -90,7 +83,7 @@
   <!-- MODAL FICHA DA OBRA -->
   <div id="modalDetalhes" class="hidden fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-40 flex items-center justify-center p-4" onclick="if(event.target===this) fecharModalDetalhes()">
     <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
-      <div id="detalheFaixaTopo" class="h-3 w-full bg-emerald-700"></div>
+      <div class="h-3 w-full bg-emerald-700"></div>
       <div class="p-5 space-y-4">
         <div class="flex items-start justify-between gap-3">
           <div class="flex gap-3.5">
@@ -109,10 +102,10 @@
         </div>
 
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2.5 text-xs">
-          <div>
+          <div class="flex flex-wrap items-center gap-1.5">
             <span class="font-bold text-slate-700">Ramo CDDir: </span>
             <span id="detalheClasseBadge" class="inline-block font-bold px-2 py-0.5 rounded-full text-[11px] bg-emerald-100 text-emerald-900"></span>
-            <span id="detalheCorBadge" class="hidden ml-1 inline-block font-bold px-2 py-0.5 rounded-full text-[11px]"></span>
+            <span id="detalheTomboBadge" class="hidden inline-block font-mono font-bold px-2 py-0.5 rounded-full text-[11px] bg-slate-200 text-slate-800"></span>
           </div>
 
           <div class="space-y-1.5">
@@ -122,7 +115,7 @@
 
           <div class="pt-1 border-t border-slate-200/60">
             <span class="font-bold text-slate-700">Data de Registro: </span>
-            <span id="detalheData" class="text-slate-500"></span>
+            <span id="detalheData" class="text-slate-600 font-medium"></span>
           </div>
         </div>
 
@@ -151,18 +144,6 @@
       'OUTRAS': 'Outras Classes / Referência'
     };
 
-    const CORES_LOMBADA = {
-      'AZUL': { bg: '#1d4ed8', badgeBg: '#dbeafe', badgeText: '#1e40af' },
-      'ROXO': { bg: '#7e22ce', badgeBg: '#f3e8ff', badgeText: '#6b21a8' },
-      'VERMELHO': { bg: '#dc2626', badgeBg: '#fee2e2', badgeText: '#991b1b' },
-      'VERDE': { bg: '#15803d', badgeBg: '#dcfce7', badgeText: '#166534' },
-      'AMARELO': { bg: '#facc15', badgeBg: '#fef9c3', badgeText: '#854d0e' },
-      'MARROM': { bg: '#78350f', badgeBg: '#fef3c7', badgeText: '#78350f' },
-      'LARANJA': { bg: '#ea580c', badgeBg: '#ffedd5', badgeText: '#9a3412' },
-      'CINZA': { bg: '#64748b', badgeBg: '#f1f5f9', badgeText: '#334155' },
-      'PRETO': { bg: '#0f172a', badgeBg: '#e2e8f0', badgeText: '#0f172a' }
-    };
-
     let acervoCompleto = [];
     let acervoFiltrado = [];
     let classeFiltroAtiva = 'TODAS';
@@ -182,19 +163,25 @@
       return v;
     }
 
-    function normalizarUrlCapa(urlRaw) {
+    function extrairUrlsCapa(urlRaw) {
       const u = String(urlRaw || '').trim();
-      if (!u) return '';
+      if (!u || !u.startsWith('http')) return { primaria: '', secundaria: '' };
       const matchId = u.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{20,})/);
-      if (matchId && matchId[1]) return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
-      return u;
+      if (matchId && matchId[1]) {
+        const id = matchId[1];
+        return {
+          primaria: `https://lh3.googleusercontent.com/d/${id}`,
+          secundaria: `https://drive.google.com/thumbnail?id=${id}&sz=w600`
+        };
+      }
+      return { primaria: u, secundaria: '' };
     }
 
-    function gerarSvgCapaPlaceholder(notacao, bgColor = '#047857') {
+    function gerarSvgCapaPlaceholder(notacao) {
       const safeNotacao = (notacao || 'CDDir').replace(/[<>&"']/g, '');
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320" viewBox="0 0 240 320">
         <rect width="240" height="320" fill="#f8fafc"/>
-        <rect width="28" height="320" fill="${bgColor}"/>
+        <rect width="28" height="320" fill="#047857"/>
         <rect x="48" y="44" width="164" height="232" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
         <text x="130" y="145" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1e293b" text-anchor="middle">${safeNotacao}</text>
         <text x="130" y="175" font-family="Arial, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">ACERVO CDDir</text>
@@ -357,9 +344,10 @@
           const titulo = extrairCelula(row, 3);
           const autor = extrairCelula(row, 4);
           const assunto = extrairCelula(row, 5);
-          const cor = extrairCelula(row, 6).toUpperCase();
-          const capa = normalizarUrlCapa(extrairCelula(row, 7));
-          const dataRegistro = extrairCelula(row, 8);
+          // Coluna G (índice 6): Capa_URL | Coluna H (índice 7): Data_Registro | Coluna I (índice 8): Tombo
+          const urlsCapa = extrairUrlsCapa(extrairCelula(row, 6));
+          const dataRegistro = extrairCelula(row, 7);
+          const tombo = extrairCelula(row, 8);
 
           if (index === 0 && (titulo.toLowerCase() === 'título' || titulo.toLowerCase() === 'titulo' || notacao.toLowerCase().includes('notação'))) {
             return;
@@ -367,7 +355,6 @@
           if (!titulo && !notacao) return;
 
           const classe = extrairClasseCDDir(notacao);
-          const corValida = (cor && cor !== 'N/A') ? cor : '';
 
           lista.push({
             id: `obra_${index + 2}`,
@@ -378,10 +365,11 @@
             titulo: titulo || 'Sem Título',
             autor: autor || 'Autor não informado',
             assunto,
-            cor: corValida,
-            capa,
+            capaPrimaria: urlsCapa.primaria,
+            capaSecundaria: urlsCapa.secundaria,
             dataRegistro,
-            indiceBusca: normalizarBusca(`${notacao} ${titulo} ${autor} ${assunto} ${corValida}`)
+            tombo,
+            indiceBusca: normalizarBusca(`${notacao} ${titulo} ${autor} ${assunto} ${tombo}`)
           });
         });
 
@@ -548,6 +536,19 @@
       banner.innerHTML = '';
     }
 
+    function lidarErroImagemCapa(imgEl, urlSecundaria, urlPlaceholder) {
+      if (urlSecundaria && imgEl.src !== urlSecundaria) {
+        imgEl.onerror = function () {
+          this.onerror = null;
+          this.src = urlPlaceholder;
+        };
+        imgEl.src = urlSecundaria;
+      } else {
+        imgEl.onerror = null;
+        imgEl.src = urlPlaceholder;
+      }
+    }
+
     function renderizarGrid() {
       const grid = document.getElementById('gridAcervo');
       const vazio = document.getElementById('estadoVazio');
@@ -560,18 +561,17 @@
 
       vazio.classList.add('hidden');
       grid.innerHTML = acervoFiltrado.map(obra => {
-        const corInfo = obra.cor ? CORES_LOMBADA[obra.cor] : null;
-        const faixaBg = corInfo ? corInfo.bg : '#047857';
-        const placeholder = gerarSvgCapaPlaceholder(obra.notacao, faixaBg);
-        const imgSrc = obra.capa || placeholder;
+        const placeholder = gerarSvgCapaPlaceholder(obra.notacao);
+        const imgSrc = obra.capaPrimaria || placeholder;
+        const safeSec = (obra.capaSecundaria || '').replace(/'/g, '');
 
         return `
           <article onclick="abrirModalDetalhes('${obra.id}')" class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition overflow-hidden flex flex-col justify-between cursor-pointer group">
             <div>
-              <div class="h-2 w-full" style="background-color: ${faixaBg};"></div>
+              <div class="h-2 w-full bg-emerald-700"></div>
               <div class="p-3.5 flex gap-3">
                 <div class="w-16 h-24 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">
-                  <img src="${imgSrc}" onerror="this.onerror=null;this.src='${placeholder}'" alt="${obra.titulo}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                  <img src="${imgSrc}" onerror="lidarErroImagemCapa(this, '${safeSec}', '${placeholder}')" alt="${obra.titulo}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 </div>
 
                 <div class="flex-1 min-w-0 space-y-1">
@@ -609,15 +609,12 @@
       const obra = acervoCompleto.find(o => o.id === id);
       if (!obra) return;
 
-      const corInfo = obra.cor ? CORES_LOMBADA[obra.cor] : null;
-      const faixaBg = corInfo ? corInfo.bg : '#047857';
-      const placeholder = gerarSvgCapaPlaceholder(obra.notacao, faixaBg);
-
-      document.getElementById('detalheFaixaTopo').style.backgroundColor = faixaBg;
-
+      const placeholder = gerarSvgCapaPlaceholder(obra.notacao);
       const img = document.getElementById('detalheCapa');
-      img.src = obra.capa || placeholder;
-      img.onerror = function() { this.onerror = null; this.src = placeholder; };
+      img.onerror = function () {
+        lidarErroImagemCapa(this, obra.capaSecundaria, placeholder);
+      };
+      img.src = obra.capaPrimaria || placeholder;
 
       document.getElementById('detalheNotacao').innerText = obra.notacao || 'SEM NOTAÇÃO';
 
@@ -642,14 +639,12 @@
       document.getElementById('detalheData').innerText = obra.dataRegistro || 'Não registrada';
       document.getElementById('detalheClasseBadge').innerText = CLASSES_CDDIR[obra.classe] || obra.classe;
 
-      const corBadge = document.getElementById('detalheCorBadge');
-      if (obra.cor) {
-        corBadge.innerText = `Lombada: ${obra.cor}`;
-        corBadge.style.backgroundColor = corInfo ? corInfo.badgeBg : '#f1f5f9';
-        corBadge.style.color = corInfo ? corInfo.badgeText : '#334155';
-        corBadge.classList.remove('hidden');
+      const tomboBadge = document.getElementById('detalheTomboBadge');
+      if (obra.tombo) {
+        tomboBadge.innerText = `Tombo: ${obra.tombo}`;
+        tomboBadge.classList.remove('hidden');
       } else {
-        corBadge.classList.add('hidden');
+        tomboBadge.classList.add('hidden');
       }
 
       const containerTags = document.getElementById('detalheAssuntoTags');
